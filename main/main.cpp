@@ -10,10 +10,10 @@ HANDLE MainProcessHandle = NULL;
 std::wstring createBootCommand(std::wstring processName, std::wstring qucikLogin)
 {
     std::wstring processNameInternal = processName.c_str();
-    std::wstring commandLine = L"--enable-logging";
+    //std::wstring commandLine = L"--enable-logging";
     std::wstring realProcessName = processNameInternal;
-    realProcessName += L" ";
-    realProcessName += commandLine;
+    //realProcessName += L" ";
+    //realProcessName += commandLine;
     if (qucikLogin.length() > 0)
     {
         realProcessName += L" -q ";
@@ -168,24 +168,16 @@ std::wstring AnsiToUtf16(const std::string &str)
     return wstrTo;
 }
 
-int main(int argc, char *argv[])
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-    signal(SIGTERM, signalHandler);
-    signal(SIGINT, signalHandler);
     wchar_t buffer[MAX_PATH];
-    if (argc < 2)
-    {
-        std::cerr << "Usage: " << argv[0] << " <quickLogin>" << std::endl;
-        return 1;
-    }
-    std::wstring quickLogin = AnsiToUtf16(argv[1]);
     GetModuleFileNameW(NULL, buffer, MAX_PATH);
     std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
     std::wstring currentDir = std::wstring(buffer).substr(0, pos);
     std::wstring processPath = currentDir + L"\\QQ.exe";
     std::wstring dllPath = currentDir + L"\\NapCatWinBootHook.dll";
-    std::wstring bootCommand = createBootCommand(processPath, quickLogin.c_str());
-    std::wcout << L"Boot Command:" << bootCommand << std::endl;
-    CreateSuspendedProcessW(bootCommand.c_str(), dllPath.c_str());
+    // std::wstring bootCommand = createBootCommand(processPath, L"");
+    // std::wcout << L"Boot Command:" << bootCommand << std::endl;
+    CreateSuspendedProcessW(processPath.c_str(), dllPath.c_str());
     return 0;
 }
